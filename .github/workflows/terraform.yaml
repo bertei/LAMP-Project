@@ -1,6 +1,7 @@
 name: "Terraform Workflow"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -21,14 +22,14 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./TF-Core
+        working-directory: ./Terraform
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
-        
+
       - name: Terraform init
         id: tf-init
         run: terraform init

@@ -6,6 +6,10 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
   to_port     = 22
   ip_protocol = "tcp"
   description = "Allow ssh connections"
+
+  tags = {
+    Name = "ssh-rule"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "http" {
@@ -16,6 +20,9 @@ resource "aws_vpc_security_group_ingress_rule" "http" {
   to_port     = 80
   ip_protocol = "tcp"
   description = "Allow http connections"
+  tags = {
+    Name = "http-rule"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "https" {
@@ -26,6 +33,10 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
   to_port     = 443
   ip_protocol = "tcp"
   description = "Allow https connections"
+
+  tags = {
+    Name = "https-rule"
+  }
 }
 
 #Fetches default vpc

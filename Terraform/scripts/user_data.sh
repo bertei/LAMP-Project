@@ -112,18 +112,14 @@ fi
 #sudo /opt/certbot/bin/pip install --upgrade pip
 #sudo /opt/certbot/bin/pip install certbot certbot-apache
 #sudo ln -s /opt/certbot/bin/certbot /usr/bin/certbot
-#
 #cat <<EOT > /etc/httpd/conf.d/devops-travel.bernatei.com.conf
 #<VirtualHost *:80>
 #    ServerName devops-travel.bernatei.com
 #    DocumentRoot /var/www/html
 #</VirtualHost>
 #EOT
-#
-#sleep 200
-#
 #certbot --apache -d devops-travel.bernatei.com -m asdasd123asd@gmail.com  --agree-tos -n
-#
+
 
 #Restart services
 sudo systemctl restart httpd

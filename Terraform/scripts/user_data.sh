@@ -1,6 +1,6 @@
 #!/bin/bash
 export HOME=/home/ec2-user
-export EMAIL="bteisceira@gmail.com"
+export EMAIL="test@gmail.com"
 # Update system packages
 sudo dnf update -y
 

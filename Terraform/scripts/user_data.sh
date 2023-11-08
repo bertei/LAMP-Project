@@ -29,14 +29,18 @@ for service in ${services[*]}; do
     fi
 done
 
-# Add ec2-user to the 'apache' group
-sudo usermod -a -G apache ec2-user
-# Change '/var/www' ownership to ec2-user and apache group
-sudo chown -R ec2-user:apache /var/www
-# add group write permissions and to set the group ID on future subdirectories, change the directory permissions of /var/www and its subdirectories.
-sudo chmod 2775 /var/www && find /var/www -type d -exec sudo chmod 2775 {} \;
-# add group write permissions, recursively change the file permissions of /var/www and its subdirectories
-find /var/www -type f -exec sudo chmod 0664 {} \;
+permissions_fun () {
+    # Add ec2-user to the 'apache' group
+    sudo usermod -a -G apache ec2-user
+    # Change '/var/www' ownership to ec2-user and apache group
+    sudo chown -R ec2-user:apache /var/www
+    # add group write permissions and to set the group ID on future subdirectories, change the directory permissions of /var/www and its subdirectories.
+    sudo chmod 2775 /var/www && find /var/www -type d -exec sudo chmod 2775 {} \;
+    # add group write permissions, recursively change the file permissions of /var/www and its subdirectories
+    find /var/www -type f -exec sudo chmod 0664 {} \;
+} 
+
+permissions_fun
 
 # MYSQL Secure installation
 cat <<EOT > mysql_secure_install.sh

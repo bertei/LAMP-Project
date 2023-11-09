@@ -1,6 +1,9 @@
 #!/bin/bash
 export HOME=/home/ec2-user
 export EMAIL="test@gmail.com"
+export SCRIPT_INPUT=$HOME/LAMP-Project
+export EC2_PUBLIC_IP=$(curl http://checkip.amazonaws.com)
+
 # Update system packages
 sudo dnf update -y
 
@@ -105,6 +108,10 @@ else
     rm -f $HOME/phpMyAdmin-latest-all-languages.tar.gz
 fi
 
+#Restart services
+sudo systemctl restart httpd
+sudo systemctl restart mariadb
+
 # Certbot & SSL Configuration 
 # REQUIRES A DOMAIN. If the domain utilized is not created, certbot will fail.
 
@@ -121,7 +128,65 @@ fi
 #certbot --apache -d devops-travel.bernatei.com -m asdasd123asd@gmail.com  --agree-tos -n
 
 
-#Restart services
-sudo systemctl restart httpd
-sudo systemctl restart mariadb
+## DISCORD.SH Script Execution
+git clone https://github.com/bertei/LAMP-Project.git /home/ec2-user/LAMP-Project
 
+sleep 200
+
+cat << EOF > discord.sh
+#!/bin/bash
+DISCORD="https://discord.com/api/webhooks/1169002249939329156/7MOorDwzym-yBUs3gp0k5q7HyA42M5eYjfjpZgEwmAx1vVVcLgnlSh4TmtqZqCtbupov"
+REPO_DIR="/home/ec2-user/LAMP-Project/"
+
+if [ \$# -ne 2 ]; then
+  echo "Error al ejecutar \$0, porfavor proporcione dos argumentos: <ruta_del_repositorio> <ec2_public_ip>"
+  exit 1
+fi
+
+cd "\$1"
+pwd
+
+# Obtiene el nombre del repositorio
+REPO_NAME=\$(basename \$(git rev-parse --show-toplevel))
+# Obtiene la URL remota del repositorio
+REPO_URL=\$(git remote get-url origin)
+WEB_URL="\$2"
+# Realiza una solicitud HTTP GET a la URL
+HTTP_STATUS=\$(curl -Is "\$WEB_URL" | head -n 1)
+
+echo \$REPO_NAME
+echo \$REPO_URL
+echo \$WEB_URL
+echo \$HTTP_STATUS
+
+git config --global --add safe.directory \$REPO_DIR
+
+if [[ "\$HTTP_STATUS" == *"200 OK"* ]]; then
+  # Obtén información del repositorio
+    DEPLOYMENT_INFO2="Despliegue del repositorio \$REPO_NAME: "
+    DEPLOYMENT_INFO="La página web \$WEB_URL está en línea."
+    COMMIT="Commit: \$(git rev-parse --short HEAD)"
+    AUTHOR="Autor: \$(git log -1 --pretty=format:'%an')"
+    DESCRIPTION="Descripción: \$(git log -1 --pretty=format:'%s')"
+else
+  DEPLOYMENT_INFO="La página web \$WEB_URL no está en línea."
+fi
+
+echo \$DEPLOYMENT_INFO2
+echo \$DEPLOYMENT_INFO
+echo \$COMMIT
+echo \$AUTHOR
+echo \$DESCRIPTION
+
+# Construye el mensaje
+MESSAGE="\$DEPLOYMENT_INFO2\n\$DEPLOYMENT_INFO\n\$COMMIT\n\$AUTHOR\n\$REPO_URL\n\$DESCRIPTION"
+
+# Envía el mensaje a Discord utilizando la API de Discord
+curl -X POST -H "Content-Type: application/json" \
+     -d '{
+       "content": "'"\${MESSAGE}"'"
+     }' "\$DISCORD"
+EOF
+
+chmod +x discord.sh
+sh discord.sh $SCRIPT_INPUT $EC2_PUBLIC_IP

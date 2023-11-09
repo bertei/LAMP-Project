@@ -124,3 +124,4 @@ fi
 #Restart services
 sudo systemctl restart httpd
 sudo systemctl restart mariadb
+

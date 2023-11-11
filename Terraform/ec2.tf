@@ -4,7 +4,7 @@ resource "aws_instance" "lamp-ec2" {
   key_name      = data.aws_key_pair.lamp-keypair.key_name
   user_data     = file("${path.module}/scripts/user_data.sh")
   tags = {
-    Name = "LAMP-EC2"
+    Name = "LAMPP-EC2"
   }
 }
 

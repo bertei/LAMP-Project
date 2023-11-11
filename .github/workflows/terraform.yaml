@@ -1,7 +1,6 @@
 name: "Terraform Workflow"
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -14,9 +13,6 @@ on:
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
-#env:
-#  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   
 jobs:
   terraform:

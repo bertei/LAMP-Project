@@ -12,3 +12,4 @@ data "aws_key_pair" "lamp-keypair" {
   key_name           = var.key_name
   include_public_key = true
 }
+
